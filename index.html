@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script>
         const stopwords = 'a an and at but by for in nor of on or so the to up yet'
         const defaults = stopwords.split(' ')
@@ -17,7 +18,7 @@
          * @returns {string}
          *   Title-cased version of `value`.
          */
-        function APAStyleTitleCase(value, options) {
+        function apa_style_title_case(value, options) {
           const configuration = options || {}
 
           if (!value) return ''
@@ -69,13 +70,66 @@
             // MeetMe Dating Site: Why Meetme Is the Best Dating Site for Young People
             // Wherever You Go, We'll Help You Find Love
         for (var title of title_list) {
-            d = APAStyleTitleCase(title);
+            d = apa_style_title_case(title);
             console.info(d);
         };
 
     </script>
+    <script>
+    $(document).ready(function(){
+        // 标题自动进行 APA 格式化
+        $("#title").on('keyup', function(e){
+            if(e.keyCode == 37 || e.keyCode == 39) {
+                return
+            }
+            var title = $(this).val();
+            title = apa_style_title_case(title);
+            var pos = $(this).getCursorPosition();
+            $(this).val(title);
+            // $(this).attr('style', 'color:green');
+            setCaretPosition($(this)[0], pos);
+        });
+    });
+    
+    //获取光标位置
+    (function ($, undefined) {
+        $.fn.getCursorPosition = function () {
+            var el = $(this).get(0);
+            var pos = 0;
+            if ('selectionStart' in el) {
+                pos = el.selectionStart;
+            } else if ('selection' in document) {
+                el.focus();
+                var Sel = document.selection.createRange();
+                var SelLength = document.selection.createRange().text.length;
+                Sel.moveStart('character', -el.value.length);
+                pos = Sel.text.length - SelLength;
+            }
+            return pos;
+        }
+    })(jQuery);
+    /**
+     * 定位光标
+     */
+    function setCaretPosition(ctrl, pos){
+        if(ctrl.setSelectionRange)
+        {
+            ctrl.focus();
+            ctrl.setSelectionRange(pos,pos);
+        }
+        else if (ctrl.createTextRange) {
+            var range = ctrl.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    }
+    </script>
 </head>
 <body>
     
+    <input type="text" id="title">
+
 </body>
 </html>
