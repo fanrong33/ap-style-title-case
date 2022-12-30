@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script>
+        const stopwords = 'a an and at but by for in nor of on or so the to up yet'
+        const defaults = stopwords.split(' ')
+
+        /**
+         * Convert a value to AP/APA title case.
+         *
+         * @param {string} [value]
+         *   Short text of unknown casing.
+         * @param {Options} [options]
+         *   Configuration (optional).
+         * @returns {string}
+         *   Title-cased version of `value`.
+         */
+        function APAStyleTitleCase(value, options) {
+          const configuration = options || {}
+
+          if (!value) return ''
+
+          const stop = configuration.stopwords || defaults
+          const keep = configuration.keepSpaces
+          const splitter = /(\s+|[-‑–—,:;!?()])/
+
+          return value
+            .split(splitter)
+            .map((word, index, all) => {
+              // console.info("word: "+word + ", index: "+index);
+              // The splitter:
+              if (index % 2) {
+                  if (/\s+/.test(word)) return keep ? word : ' '
+                  return word
+              }
+
+              // 3.冒号、长破折号、句号后的第一个单词首字母大写
+              if (index - 3 > 0 && all[index-3] == ':'){
+                  return capitalize(word)
+              }
+
+              const lower = word.toLowerCase()
+
+              if (index !== 0 && index !== all.length - 1 && stop.includes(lower)) {
+                return lower
+              }
+              return capitalize(word)
+            })
+            .join('')
+        }
+
+        /**
+         * 首字母大写
+         * @param {string} value
+         * @returns {string}
+         */
+        function capitalize(value) {
+          return value.charAt(0).toUpperCase() + value.slice(1)
+        }
+
+        title_list = [
+            '3 Best Discreet Dating Sites: the Biggest Secret To Find A Partner self-report',
+            'MeetMe Dating Site: Why Meetme Is The Best Dating Site For Young People',
+            "Wherever You Go, we'll Help You Find Love"
+        ]
+            // 3 Best Discreet Dating Sites: The Biggest Secret to Find a Partner Self-Report
+            // MeetMe Dating Site: Why Meetme Is the Best Dating Site for Young People
+            // Wherever You Go, We'll Help You Find Love
+        for (var title of title_list) {
+            d = APAStyleTitleCase(title);
+            console.info(d);
+        };
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
